@@ -1,0 +1,15 @@
+name: umiuni2d_sprite_flutter
+description: A new Flutter project.
+version: 0.0.1
+author:
+homepage:
+
+dependencies:
+  flutter:
+    sdk: flutter
+  umiuni2d_sprite:
+    git: https://github.com/kyorohiro/umiuni2d_sprite.git
+
+dev_dependencies:
+  test: ^0.12.0
+
