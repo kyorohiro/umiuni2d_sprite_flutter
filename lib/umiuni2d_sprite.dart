@@ -19,9 +19,12 @@ part 'src/ncanvas.dart';
 part 'src/loader.dart';
 //
 //
+
 class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidget {
   core.Stage _stage;
   core.Stage get stage => _stage;
+
+  core.OnStart onStart = null;
 
   GameWidget({
     core.DisplayObject root,
@@ -47,9 +50,13 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     }
   }
 
-  void start() {
+  void start({core.OnStart onStart}) {
+    this.onStart = onStart;
     run();
     stage.start();
+    if(onStart != null) {
+      onStart(this);
+    }
   }
 
   void stop() {
