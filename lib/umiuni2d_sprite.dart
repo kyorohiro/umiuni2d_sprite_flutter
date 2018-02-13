@@ -26,6 +26,7 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
 
   core.OnStart onStart = null;
 
+
   GameWidget({
     core.DisplayObject root,
     double width:400.0,
@@ -50,10 +51,12 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     }
   }
 
-  void start({core.OnStart onStart}) {
+  void start({core.OnStart onStart, bool useAnimationLoop:false}) {
     this.onStart = onStart;
     run();
-    stage.start();
+    if(useAnimationLoop) {
+      stage.start();
+    }
     if(onStart != null) {
       onStart(this);
     }
@@ -78,7 +81,7 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     if(root == null) {
       root = new core.DisplayObject();
     }
-    return new TinyFlutterStage(this, root, tickInPerFrame: tickInPerFrame, useTestCanvas: useTestCanvas, useDrawVertexForPrimtive: useDrawVertexForPrimtive);
+    return new TinyFlutterStage(this, root, useDrawVertexForPrimtive: useDrawVertexForPrimtive);
   }
 
   @override
