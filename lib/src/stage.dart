@@ -92,21 +92,8 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
     } else {
       _innerTickWithOwn();
     }
-    //    Scheduler.instance.addPersistentFrameCallback(_innerTick);
   }
 
-/*
-  void markPaintshot() {
-    if (animeIsStart != true) {
-      this.markNeedsPaint();
-      kickPaintTick();
-//      _innerTickWithOwn();
-      int a2 = new DateTime.now().millisecondsSinceEpoch;
-      _innerTick(new Duration(milliseconds: new DateTime.now().millisecondsSinceEpoch));
-
-    }
-  }
-  */
  int onshot = 0;
 
  @override
@@ -124,21 +111,21 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
    }
  }
 
- _markPaintshot() async {
-
+ //
+ //
+ //
+ Future<core.Stage> _markPaintshot() async {
    try {
      for (;animeIsStart != true && onshot >= 0;onshot--) {
        this.markNeedsPaint();
        kickPaintTick();
-       int a2 = new DateTime.now().millisecondsSinceEpoch;
-            //   print("---sssssssssssasdfasdfasdfasdfasdf# ${onshot}#");
        _innerTick(new Duration(milliseconds: new DateTime.now().millisecondsSinceEpoch));
        await new Future.delayed(new Duration(milliseconds: 20));
      }
    } finally {
      onshot = 0;
-      //  print("---ZZZZZZZZZZss\n----SSSSZZZZZZZZS");
    }
+   return this;
  }
 
   _innerTickWithOwn() async {
