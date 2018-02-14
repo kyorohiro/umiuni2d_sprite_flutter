@@ -19,9 +19,13 @@ part 'src/ncanvas.dart';
 part 'src/loader.dart';
 //
 //
+
 class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidget {
   core.Stage _stage;
   core.Stage get stage => _stage;
+
+  core.OnStart onStart = null;
+  core.OnLoop onLoop = null;
 
   GameWidget({
     core.DisplayObject root,
@@ -47,13 +51,22 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     }
   }
 
-  void start() {
+  Future<GameWidget> start({core.OnStart onStart,core.OnLoop onLoop, bool useAnimationLoop:false}) async  {
+    this.onStart = onStart;
+    this.onLoop = onLoop;
     run();
-    stage.start();
+    if(useAnimationLoop) {
+      stage.start();
+    }
+    if(onStart != null) {
+      onStart(this);
+    }
+    return this;
   }
 
-  void stop() {
+  Future<GameWidget> stop() async {
     stage.stop();
+    return this;
   }
 
 
@@ -71,7 +84,7 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     if(root == null) {
       root = new core.DisplayObject();
     }
-    return new TinyFlutterStage(this, root, tickInPerFrame: tickInPerFrame, useTestCanvas: useTestCanvas, useDrawVertexForPrimtive: useDrawVertexForPrimtive);
+    return new TinyFlutterStage(this, root, useDrawVertexForPrimtive: useDrawVertexForPrimtive);
   }
 
   @override
