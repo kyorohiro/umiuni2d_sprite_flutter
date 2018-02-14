@@ -56,7 +56,7 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
   static const int kMaxOfTouch = 5;
   Map<int, TouchPoint> touchPoints = {};
 
-  core.GameWidget _builder;
+  GameWidget _builder;
 
   @override
   core.GameWidget get builder => _builder;
@@ -223,6 +223,9 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
 
   @override
   void kick(int timeStamp) {
+    if(this._builder.onLoop != null) {
+      this._builder.onLoop(this._builder);
+    }
     kickCountForPaint++;
     stageBase.kick(timeStamp);
   }

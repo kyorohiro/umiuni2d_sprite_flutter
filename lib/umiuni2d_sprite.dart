@@ -25,7 +25,7 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
   core.Stage get stage => _stage;
 
   core.OnStart onStart = null;
-
+  core.OnLoop onLoop = null;
 
   GameWidget({
     core.DisplayObject root,
@@ -51,8 +51,9 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     }
   }
 
-  void start({core.OnStart onStart, bool useAnimationLoop:false}) {
+  Future<GameWidget> start({core.OnStart onStart,core.OnLoop onLoop, bool useAnimationLoop:false}) async  {
     this.onStart = onStart;
+    this.onLoop = onLoop;
     run();
     if(useAnimationLoop) {
       stage.start();
@@ -60,10 +61,12 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     if(onStart != null) {
       onStart(this);
     }
+    return this;
   }
 
-  void stop() {
+  Future<GameWidget> stop() async {
     stage.stop();
+    return this;
   }
 
 
