@@ -94,12 +94,12 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
 
   @override
   Future<data.Uint8List> loadBytes(String path) async {
-    return await ResourceLoader.loadBytes(""+assetsRoot+"/");
+    return await ResourceLoader.loadBytes(""+assetsRoot+path);
   }
 
   @override
   Future<String> loadString(String path) async {
-    String a = await ResourceLoader.loadString(""+assetsRoot+"/");
+    String a = await ResourceLoader.loadString(""+assetsRoot+path);
     return a;
   }
 
