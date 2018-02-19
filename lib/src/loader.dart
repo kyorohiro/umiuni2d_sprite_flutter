@@ -33,9 +33,6 @@ class ResourceLoader {
     }
     stream.addListener(listener);
     return completer.future;
-//    AssetBundle bundle = getAssetBundle();
-//    ImageResource resource = bundle.loadImage(url);
-//    return resource.first;
   }
 
   static Future<String> loadString(String url) async {

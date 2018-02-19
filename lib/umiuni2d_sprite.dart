@@ -21,8 +21,10 @@ part 'src/loader.dart';
 //
 
 class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidget {
-  core.Stage _stage;
-  core.Stage get stage => _stage;
+  core.Sta+
+  ge _stage;
+  core.Sta+
+  ge get stage => _stage;
 
   core.OnStart onStart = null;
   core.OnLoop onLoop = null;
@@ -84,7 +86,7 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     if(root == null) {
       root = new core.DisplayObject();
     }
-    return new TinyFlutterStage(this, root, useDrawVertexForPrimtive: useDrawVertexForPrimtive);
+    return new TinyFlutterStage(this, root);
   }
 
   @override

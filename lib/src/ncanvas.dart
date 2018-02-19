@@ -1,199 +1,15 @@
 part of umiuni2d_sprite_flutter;
 
-class TinyFlutterNCanvas extends core.Canvas {
+class TinyFlutterNCanvas extends core.CanvasRoze {
 
-  TinyFlutterNCanvas(this.canvas, {this.useDrawVertexForPrimtive: true}) {
+  TinyFlutterNCanvas(this.canvas) {
     numOfCircleElm = 12;
   }
 
   Canvas canvas;
 
-  List<Offset> _vertices = [];
-  List<Offset> _textureCoordinates = [];
-  List<Color> _colors = [];
-  List<int> _indicies = [];
-  core.Image _curImage = null;
-  int _numOfCircleElm;
-  int get numOfCircleElm => _numOfCircleElm;
-  bool useDrawVertexForPrimtive;
-
-  List<double> circleCash = [];
-  void set numOfCircleElm(int v) {
-    if (circleCash.length == 0 || _numOfCircleElm != v) {
-      _numOfCircleElm = v;
-      circleCash.clear();
-      for (int i = 0; i < _numOfCircleElm + 1; i++) {
-        circleCash.add(math.cos(2 * math.PI * (i / _numOfCircleElm)));
-        circleCash.add(math.sin(2 * math.PI * (i / _numOfCircleElm)));
-      }
-    }
-  }
-
-  @override
-  void drawOval(core.Stage stage, core.Rect rect, core.Paint paint, {List<Object> cache: null}) {
-    if (_curImage != null) {
-      flush();
-    }
-    if (paint.style == core.PaintStyle.fill) {
-      drawFillOval(stage, rect, paint);
-    } else {
-      drawStrokeOval(stage, rect, paint);
-    }
-  }
-
-  void drawStrokeOval(core.Stage stage, core.Rect rect, core.Paint paint) {
-    if (_curImage != null) {
-      flush();
-    }
-    double cx = rect.x + rect.w / 2.0;
-    double cy = rect.y + rect.h / 2.0;
-    double a = (rect.w + paint.strokeWidth) / 2;
-    double b = (rect.h + paint.strokeWidth) / 2;
-    double c = (rect.w - paint.strokeWidth) / 2;
-    double d = (rect.h - paint.strokeWidth) / 2;
-
-    Matrix4 m = getMatrix();
-    Vector3 s1 = v1;
-    Vector3 s2 = v2;
-    Vector3 s3 = v3;
-    Vector3 s4 = v4;
-    Color color = new Color.fromARGB(paint.color.a, paint.color.r, paint.color.g, paint.color.b);
-    for (int i = 0; i < numOfCircleElm; i++) {
-      //
-      int bbb = _vertices.length;
-
-      //
-      s1.x = cx + circleCash[i * 2 + 0] * c;
-      s1.y = cy + circleCash[i * 2 + 1] * d;
-      s1.z = 0.0;
-      s1 = m * s1;
-
-      s2.x = cx + circleCash[i * 2 + 0] * a;
-      s2.y = cy + circleCash[i * 2 + 1] * b;
-      s1.z = 0.0;
-      s2 = m * s2;
-
-      s3.x = cx + circleCash[i * 2 + 2] * a;
-      s3.y = cy + circleCash[i * 2 + 3] * b;
-      s1.z = 0.0;
-      s3 = m * s3;
-
-      s4.x = cx + circleCash[i * 2 + 2] * c;
-      s4.y = cy + circleCash[i * 2 + 3] * d;
-      s1.z = 0.0;
-      s4 = m * s4;
-
-      _vertices.addAll([
-        new Offset(s1.x, s1.y), new Offset(s2.x, s2.y),
-        new Offset(s3.x, s3.y), new Offset(s4.x, s4.y)]);
-      _colors.addAll([color, color, color, color]);
-      _indicies.addAll([bbb + 0, bbb + 1, bbb + 2]);
-      _indicies.addAll([bbb + 0, bbb + 2, bbb + 3]);
-    }
-  }
-
-  Vector3 s = new Vector3(0.0, 0.0, 0.0);
-  void drawFillOval(core.Stage stage, core.Rect rect, core.Paint paint) {
-    if (_curImage != null) {
-      flush();
-    }
-    double cx = rect.x + rect.w / 2.0;
-    double cy = rect.y + rect.h / 2.0;
-    double a = rect.w / 2;
-    double b = rect.h / 2;
-    Matrix4 m = getMatrix();
-    double flZ = 0.0;
-    s.x = 0.0;
-    s.y = 0.0;
-    s.z = 0.0;
-    Color c = new Color.fromARGB(paint.color.a, paint.color.r, paint.color.g, paint.color.b);
-    for (int i = 0; i < numOfCircleElm; i++) {
-      //
-      int bbb = _vertices.length;
-
-      //
-      s.x = cx;
-      s.y = cy;
-      s.z = flZ;
-      s = m * s;
-      _vertices.add(new Offset(s.x, s.y));
-      _colors.add(c);
-
-      //
-      s.x = cx + circleCash[i * 2] * a;
-      s.y = cy + circleCash[i * 2 + 1] * b;
-      s.z = flZ;
-      s = m * s;
-      _vertices.add(new Offset(s.x, s.y));
-      _colors.add(c);
-
-      //
-      s.x = cx + circleCash[i * 2 + 2] * a;
-      s.y = cy + circleCash[i * 2 + 3] * b;
-      s.z = flZ;
-      s = m * s;
-      _vertices.add(new Offset(s.x, s.y));
-      _colors.add(c);
-
-      _indicies.addAll([bbb + 0, bbb + 1, bbb + 2]);
-
-      flZ += 0.0001;
-    }
-  }
-
-  Vector3 v1 = new Vector3(0.0, 0.0, 0.0);
-  Vector3 v2 = new Vector3(0.0, 0.0, 0.0);
-  Vector3 v3 = new Vector3(0.0, 0.0, 0.0);
-  Vector3 v4 = new Vector3(0.0, 0.0, 0.0);
-
-  @override
-  void drawLine(core.Stage stage, core.Point p1, core.Point p2, core.Paint paint, {List<Object> cache: null}) {
-    if (_curImage != null) {
-      flush();
-    }
-    int bi = _vertices.length;
-    Matrix4 m = getMatrix();
-    double d = math.sqrt(math.pow(p1.x - p2.x, 2) + math.pow(p1.y - p2.y, 2));
-    double dy = -1 * paint.strokeWidth * (p2.x - p1.x) / (d * 2);
-    double dx = paint.strokeWidth * (p2.y - p1.y) / (d * 2);
-    double sx = p1.x;
-    double sy = p1.y;
-    double ex = p2.x;
-    double ey = p2.y;
-
-    v1.x = sx - dx;
-    v1.y = sy - dy;
-    v1.z = 0.0;
-    v2.x = sx + dx;
-    v2.y = sy + dy;
-    v2.z = 0.0;
-    v3.x = ex + dx;
-    v3.y = ey + dy;
-    v3.z = 0.0;
-    v4.x = ex - dx;
-    v4.y = ey - dy;
-    v4.z = 0.0;
-    v1 = m * v1;
-    v2 = m * v2;
-    v3 = m * v3;
-    v4 = m * v4;
-    _vertices.addAll([new Offset(v1.x, v1.y), new Offset(v2.x, v2.y), new Offset(v3.x, v3.y), new Offset(v4.x, v4.y)]);
-    Color c = new Color.fromARGB(paint.color.a, paint.color.r, paint.color.g, paint.color.b);
-    _colors.addAll([c, c, c, c]);
-    _indicies.addAll([bi + 0, bi + 1, bi + 2, bi + 0, bi + 2, bi + 3]);
-  }
-
-  @override
-  void drawRect(core.Stage stage, core.Rect rect, core.Paint paint, {List<Object> cache: null}) {
-    if (_curImage != null) {
-      flush();
-    }
-    if (paint.style == core.PaintStyle.fill) {
-      drawFillRect(stage, rect, paint);
-    } else {
-      drawStrokeRect(stage, rect, paint);
-    }
-  }
+  double get contextWidht => 2.0;
+  double get contextHeight => -2.0;
 
   Paint toPaintWithRawFlutter(core.Paint p) {
     Paint pp = new Paint();
@@ -210,54 +26,6 @@ class TinyFlutterNCanvas extends core.Canvas {
     return pp;
   }
 
-  void drawStrokeRect(core.Stage stage, core.Rect rect, core.Paint paint) {
-    if (_curImage != null) {
-      flush();
-    }
-    double sx = rect.x;
-    double sy = rect.y;
-    double ex = rect.x + rect.w; //+paint.strokeWidth;
-    double ey = rect.y + rect.h; //+paint.strokeWidth;
-    double dx = paint.strokeWidth / 2;
-
-    drawLine(stage, new core.Point(sx, sy - dx), new core.Point(sx, ey + dx), paint);
-    drawLine(stage, new core.Point(sx + dx, ey), new core.Point(ex - dx, ey), paint);
-    drawLine(stage, new core.Point(ex, sy - dx), new core.Point(ex, ey + dx), paint);
-    drawLine(stage, new core.Point(sx + dx, sy), new core.Point(ex - dx, sy), paint);
-  }
-
-  void drawFillRect(core.Stage stage, core.Rect rect, core.Paint paint) {
-    if (_curImage != null) {
-      flush();
-    }
-    int bi = _vertices.length;
-    Matrix4 m = getMatrix();
-
-    v1.x = rect.x;
-    v1.y = rect.y;
-    v1.z = 0.0;
-    v2.x = rect.x;
-    v2.y = rect.y + rect.h;
-    v2.z = 0.0;
-    v3.x = rect.x + rect.w;
-    v3.y = rect.y + rect.h;
-    v3.z = 0.0;
-    v4.x = rect.x + rect.w;
-    v4.y = rect.y;
-    v4.z = 0.0;
-
-    v1 = m * v1;
-    v2 = m * v2;
-    v3 = m * v3;
-    v4 = m * v4;
-
-    _vertices.addAll([
-      new Offset(v1.x, v1.y), new Offset(v2.x, v2.y),
-      new Offset(v3.x, v3.y), new Offset(v4.x, v4.y)]);
-    Color c = new Color.fromARGB(paint.color.a, paint.color.r, paint.color.g, paint.color.b);
-    _colors.addAll([c, c, c, c]);
-    _indicies.addAll([bi + 0, bi + 1, bi + 2, bi + 0, bi + 2, bi + 3]);
-  }
 
   @override
   void clearClip(core.Stage stage, {List<Object> cache: null}) {
@@ -285,7 +53,6 @@ class TinyFlutterNCanvas extends core.Canvas {
     path.lineTo(v2.x, v2.y);
     path.lineTo(v3.x, v3.y);
     path.lineTo(v4.x, v4.y);
-    //print("v1:${v1.x} ${v1.y}, v2:${v2.x} ${v2.y}, v3:${v3.x} ${v3.y}, v4:${v4.x} ${v4.y}");
     canvas.clipPath(path);
   }
 
@@ -294,119 +61,126 @@ class TinyFlutterNCanvas extends core.Canvas {
     canvas.save();
   }
 
-  flush() {
+  @override
+  void drawVertexRaw(List<double> svertex, List<int> index) {
+    Vertices v = new Vertices.roze(svertex, this.flTex, index,this.flImg.w, this.flImg.h);
+    drawVertices(v);
+  }
+
+  void drawVertices(core.Vertices vertices) {
     Paint p = new Paint()..style = sky.PaintingStyle.fill;
-    if (_curImage != null) {
+    p.color = new sky.Color.fromARGB(0xff,0xff, 0xff, 0xff);
+
+    TinyFlutterImage curImage = (this.flImg as TinyFlutterImage);
+
+    if (curImage != null && curImage.rawImage.image != null) {
       sky.TileMode tmx = sky.TileMode.clamp;
       sky.TileMode tmy = sky.TileMode.clamp;
       data.Float64List matrix4 = new Matrix4.identity().storage;
-      sky.ImageShader imgShader = new sky.ImageShader((_curImage as TinyFlutterImage).rawImage.image, tmx, tmy, matrix4);
+      sky.ImageShader imgShader = new sky.ImageShader(curImage.rawImage.image , tmx, tmy, matrix4);
       p.shader = imgShader;
     }
-    sky.Vertices vertices = null;
-    if(_textureCoordinates.length > 0) {
-      vertices = new sky.Vertices(
-          sky.VertexMode.triangles, _vertices,
-          textureCoordinates: _textureCoordinates,
-          indices: _indicies,
-          colors: _colors);
-    } else {
-      vertices = new sky.Vertices(
-          sky.VertexMode.triangles, _vertices,
-          //  textureCoordinates: _textureCoordinates,
-          indices: _indicies,
-          colors: _colors);
-    }
-    canvas.drawVertices(vertices, sky.BlendMode.color, p);
-//    canvas.drawVertices(sky.VertexMode.triangles, _vertices, _textureCoordinates, _colors, sky.TransferMode.color, _indicies, p);
-    _vertices.clear();
-    _textureCoordinates.clear();
-    _colors.clear();
-    _indicies.clear();
-    _curImage = null;
-  }
-
-
-  void drawImageRect(core.Stage stage, core.Image image, core.Rect src, core.Rect dst, core.Paint paint, {core.CanvasTransform transform: core.CanvasTransform.NONE, List<Object> cache: null}) {
-    if (_curImage == null && _indicies.length > 0) {
-      flush();
-    } else if (_curImage != null && _curImage != image) {
-      flush();
-    }
-
-    if (_curImage == null) {
-      _curImage = image;
-    }
-
-    int bi = _vertices.length;
-    List<Offset> primiveVertics = null;
-    List<Color> primitveColors = null;
-    List<Offset> primitveTexInf = null;
-
-    Matrix4 m = this.getMatrix();
-    v1.x = dst.x;
-    v1.y = dst.y;
-    v1.z = 0.0;
-    v2.x = dst.x;
-    v2.y = dst.y + dst.h;
-    v2.z = 0.0;
-    v3.x = dst.x + dst.w;
-    v3.y = dst.y;
-    v3.z = 0.0;
-    v4.x = dst.x + dst.w;
-    v4.y = dst.y + dst.h;
-    v4.z = 0.0;
-
-    v1 = m * v1;
-    v2 = m * v2;
-    v3 = m * v3;
-    v4 = m * v4;
-    primiveVertics = [new Offset(v1.x, v1.y), new Offset(v2.x, v2.y), new Offset(v3.x, v3.y), new Offset(v4.x, v4.y)];
-    Color c = new Color.fromARGB(0x00, 0x00, 0x00, 0x00);
-    primitveColors = [c, c, c, c];
-
-    {
-      double xs = src.x;
-      double ys = src.y;
-      double xe = src.x + src.w;
-      double ye = src.y + src.h;
-      switch (transform) {
-        case core.CanvasTransform.NONE:
-          primitveTexInf = [new Offset(xs, ys), new Offset(xs, ye), new Offset(xe, ys), new Offset(xe, ye)];
-          break;
-        case core.CanvasTransform.ROT90:
-          primitveTexInf = [new Offset(xs, ye), new Offset(xe, ye), new Offset(xs, ys), new Offset(xe, ys)];
-          break;
-        case core.CanvasTransform.ROT180:
-          primitveTexInf = [new Offset(xe, ye), new Offset(xe, ys), new Offset(xs, ye), new Offset(xs, ys)];
-          break;
-        case core.CanvasTransform.ROT270:
-          primitveTexInf = [new Offset(xe, ys), new Offset(xs, ys), new Offset(xe, ye), new Offset(xs, ye)];
-          break;
-        case core.CanvasTransform.MIRROR:
-          primitveTexInf = [new Offset(xe, ys), new Offset(xe, ye), new Offset(xs, ys), new Offset(xs, ye)];
-          break;
-        case core.CanvasTransform.MIRROR_ROT90:
-          primitveTexInf = [new Offset(xs, ys), new Offset(xe, ys), new Offset(xs, ye), new Offset(xe, ye)];
-          break;
-        case core.CanvasTransform.MIRROR_ROT180:
-          primitveTexInf = [new Offset(xs, ye), new Offset(xs, ys), new Offset(xe, ye), new Offset(xe, ys)];
-          break;
-        case core.CanvasTransform.MIRROR_ROT270:
-          primitveTexInf = [new Offset(xe, ye), new Offset(xs, ye), new Offset(xe, ys), new Offset(xs, ys)];
-          break;
-        default:
-          primitveTexInf = [new Offset(xs, ys), new Offset(xs, ye), new Offset(xe, ys), new Offset(xe, ye)];
-      }
-    }
-    _vertices.addAll(primiveVertics);
-    _colors.addAll(primitveColors);
-    _textureCoordinates.addAll(primitveTexInf);
-    _indicies.addAll([bi + 0, bi + 1, bi + 2, bi + 2, bi + 1, bi + 3]);
+    canvas.drawVertices((vertices as Vertices).raw, sky.BlendMode.color, p);
   }
 
   @override
   void updateMatrix() {
     //canvas.setMatrix(this.getMatrix().storage);
+  }
+}
+
+
+class Vertices extends core.Vertices {
+  sky.Vertices raw;
+//
+//  Vertices(
+//      VertexMode mode,
+//      data.Float32List positions, {
+//        data.Float32List textureCoordinates,
+//        data.Int32List colors,
+//        data.Int32List indices,
+//      }) {
+//      //
+//      // dart:ui is wrong now(2018/2/19).
+//      //   if (colors != null && colors.length * 2 != positions.length)
+//      //   throw new ArgumentError('"positions" and "colors" lengths must match.');
+//      //
+//      raw = new sky.Vertices.raw(toSkyVertexMode(mode),
+//          positions,
+//          textureCoordinates: textureCoordinates,
+//          colors: colors,
+//          indices:indices);
+//  }
+
+
+  Vertices.roze(List<double> vertces, List<double> cCoordinates, List<int> indices, int w, int h) :super.list(core.VertexMode.triangles, null){
+      int n = vertces.length~/8;
+      List<Offset> positionsSrc = new List(n);
+      List<Color> colorsSrc = new List(n);
+      List<Offset> textureSrc =  null;//new List(n);
+
+      for(int i=0;i<n;i++) {
+        positionsSrc[i] = new Offset(vertces[8*i+0], vertces[8*i+1]);//3,4,1
+        colorsSrc[i] = new Color.fromARGB(
+            (255*vertces[8*i+6]).toInt(),
+            (255*vertces[8*i+3]).toInt(),
+            (255*vertces[8*i+4]).toInt(),
+            (255*vertces[8*i+5]).toInt()
+            );
+      }
+      if(cCoordinates != null){
+        textureSrc = new List(positionsSrc.length);
+      }
+      if(textureSrc != null) {
+        for (int i = 0; i < textureSrc.length; i++) {
+          textureSrc[i] = new Offset(cCoordinates[2 * i + 0]*w, cCoordinates[2 * i + 1]*h);
+        }
+      }
+
+      raw = new sky.Vertices(toSkyVertexMode(core.VertexMode.triangles), positionsSrc,
+      textureCoordinates: textureSrc,
+      colors: colorsSrc,
+      indices:indices);
+    }
+
+  Vertices.list(
+      core.VertexMode mode,
+      List<double> positions, {
+        List<double> cCoordinates,
+        List<int> colors,
+        List<int> indices,
+      }) :super.list(mode, positions, cCoordinates:cCoordinates, colors:colors, indices:indices){
+    List<Offset> positionsSrc = new List(positions.length~/2);
+    List<Color> colorsSrc = new List(positionsSrc.length);
+    List<Offset> textureSrc = null;
+    if(cCoordinates != null){
+      textureSrc = new List(cCoordinates.length~/2);
+    }
+
+
+    for(int i=0;i< positionsSrc.length;i++) {
+      positionsSrc[i] = new Offset(positions[2*i+0], positions[2*i+1]);
+      colorsSrc[i] = new Color.fromARGB(colors[4*i+0], colors[4*i+1], colors[4*i+2], colors[4*i+3]);
+    }
+    if(textureSrc != null) {
+      for (int i = 0; i < textureSrc.length; i++) {
+        textureSrc[i] = new Offset(cCoordinates[2 * i + 0], cCoordinates[2 * i + 1]);
+      }
+    }
+    raw = new sky.Vertices(toSkyVertexMode(mode), positionsSrc,
+        textureCoordinates: textureSrc,
+        colors: colorsSrc,
+        indices:indices);
+  }
+  sky.VertexMode toSkyVertexMode(core.VertexMode mode) {
+    switch(mode){
+      case core.VertexMode.triangles:
+        return sky.VertexMode.triangles;
+      case core.VertexMode.triangleFan:
+        return sky.VertexMode.triangleFan;
+      case core.VertexMode.triangleStrip:
+        return sky.VertexMode.triangleStrip;
+    }
+    return sky.VertexMode.triangles;
   }
 }
