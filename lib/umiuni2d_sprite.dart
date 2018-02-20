@@ -21,10 +21,8 @@ part 'src/loader.dart';
 //
 
 class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidget {
-  core.Sta+
-  ge _stage;
-  core.Sta+
-  ge get stage => _stage;
+  core.Stage _stage;
+  core.Stage get stage => _stage;
 
   core.OnStart onStart = null;
   core.OnLoop onLoop = null;

@@ -63,7 +63,13 @@ class TinyFlutterNCanvas extends core.CanvasRoze {
 
   @override
   void drawVertexRaw(List<double> svertex, List<int> index) {
-    Vertices v = new Vertices.roze(svertex, this.flTex, index,this.flImg.w, this.flImg.h);
+    int w = 0;
+    int h = 0;
+    if(this.flImg != null) {
+      w = this.flImg.w;
+      h = this.flImg.h;
+    }
+    Vertices v = new Vertices.roze(svertex, this.flTex, index, w, h);
     drawVertices(v);
   }
 
@@ -80,7 +86,12 @@ class TinyFlutterNCanvas extends core.CanvasRoze {
       sky.ImageShader imgShader = new sky.ImageShader(curImage.rawImage.image , tmx, tmy, matrix4);
       p.shader = imgShader;
     }
-    canvas.drawVertices((vertices as Vertices).raw, sky.BlendMode.color, p);
+    //p.blendMode = sky.BlendMode.src;// ^ sky.BlendMode.multiply;
+    if((vertices as Vertices).raw != null) {
+      canvas.drawVertices((vertices as Vertices).raw, sky.BlendMode.srcIn, p);
+    }
+//    canvas.drawVertices((vertices as Vertices).raw2, sky.BlendMode.multiply, p);
+
   }
 
   @override
@@ -92,7 +103,8 @@ class TinyFlutterNCanvas extends core.CanvasRoze {
 
 class Vertices extends core.Vertices {
   sky.Vertices raw;
-//
+
+  //
 //  Vertices(
 //      VertexMode mode,
 //      data.Float32List positions, {
@@ -128,19 +140,33 @@ class Vertices extends core.Vertices {
             (255*vertces[8*i+5]).toInt()
             );
       }
-      if(cCoordinates != null){
+      if(cCoordinates != null && cCoordinates.length > 0){
         textureSrc = new List(positionsSrc.length);
       }
+
+      bool isZero = true;
       if(textureSrc != null) {
         for (int i = 0; i < textureSrc.length; i++) {
           textureSrc[i] = new Offset(cCoordinates[2 * i + 0]*w, cCoordinates[2 * i + 1]*h);
+          if(cCoordinates[2 * i + 0] != 0.0 || cCoordinates[2 * i + 1] != 0.0) {
+            isZero = false;
+          };
         }
       }
 
-      raw = new sky.Vertices(toSkyVertexMode(core.VertexMode.triangles), positionsSrc,
-      textureCoordinates: textureSrc,
-      colors: colorsSrc,
-      indices:indices);
+      if(textureSrc == null || isZero == true) {
+        print("VV");
+        raw = new sky.Vertices(
+            toSkyVertexMode(core.VertexMode.triangles), positionsSrc,
+            colors: colorsSrc,
+            indices: indices);
+      } else {
+        raw = new sky.Vertices(
+            toSkyVertexMode(core.VertexMode.triangles), positionsSrc,
+            textureCoordinates: textureSrc,
+            colors: colorsSrc,
+            indices: indices);
+      }
     }
 
   Vertices.list(
