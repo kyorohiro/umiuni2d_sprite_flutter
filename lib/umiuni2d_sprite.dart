@@ -27,6 +27,7 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
   core.OnStart onStart = null;
   core.OnLoop onLoop = null;
 
+
   GameWidget({
     core.DisplayObject root,
     double width:400.0,
@@ -112,4 +113,5 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
   Future<double> getDisplayDensity() async {
     return sky.window.devicePixelRatio;
   }
+
 }

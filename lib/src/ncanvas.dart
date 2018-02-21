@@ -1,15 +1,10 @@
 part of umiuni2d_sprite_flutter;
 
-class TinyFlutterNCanvas extends core.CanvasRoze {
-
-  TinyFlutterNCanvas(this.canvas) {
-    numOfCircleElm = 12;
-  }
+class TinyFlutterNCanvas extends core.Canvas {
 
   Canvas canvas;
 
-  double get contextWidht => 2.0;
-  double get contextHeight => -2.0;
+  TinyFlutterNCanvas(this.canvas):super(2.0, -2.0);
 
   Paint toPaintWithRawFlutter(core.Paint p) {
     Paint pp = new Paint();
@@ -58,40 +53,43 @@ class TinyFlutterNCanvas extends core.CanvasRoze {
 
   @override
   clear() {
+    super.clear();
     canvas.save();
   }
 
-  @override
-  void drawVertexRaw(List<double> svertex, List<int> index) {
-    int w = 0;
-    int h = 0;
-    if(this.flImg != null) {
-      w = this.flImg.w;
-      h = this.flImg.h;
+  void drawVertexWithColor(List<double> positions, List<double> colors, List<int> indices,{bool hasZ:false}) {
+    Vertices v = new Vertices.list(core.VertexMode.triangles, positions, 0,0,colors: colors, indices:indices);
+    if((v as Vertices).raw != null) {
+      Paint p = new Paint()..style = sky.PaintingStyle.fill;
+      p.color = new sky.Color.fromARGB(0xff,0xff, 0xff, 0xff);
+      canvas.drawVertices((v as Vertices).raw, sky.BlendMode.srcIn, p);
     }
-    Vertices v = new Vertices.roze(svertex, this.flTex, index, w, h);
-    drawVertices(v);
   }
 
-  void drawVertices(core.Vertices vertices) {
-    Paint p = new Paint()..style = sky.PaintingStyle.fill;
-    p.color = new sky.Color.fromARGB(0xff,0xff, 0xff, 0xff);
+  void drawVertexWithImage(List<double> positions, List<double> cCoordinates, List<int> indices, core.Image img,
+      {List<double> colors, bool hasZ:false}) {
+    TinyFlutterImage curImage = (img as TinyFlutterImage);
 
-    TinyFlutterImage curImage = (this.flImg as TinyFlutterImage);
+    Vertices v = new Vertices.list(
+        core.VertexMode.triangles,
+        positions,
+        img.w,img.h,
+        cCoordinates:cCoordinates,
+        colors: colors,
+        indices:indices,);
+    sky.Paint p = new sky.Paint()..style = sky.PaintingStyle.fill;
 
-    if (curImage != null && curImage.rawImage.image != null) {
-      sky.TileMode tmx = sky.TileMode.clamp;
-      sky.TileMode tmy = sky.TileMode.clamp;
-      data.Float64List matrix4 = new Matrix4.identity().storage;
-      sky.ImageShader imgShader = new sky.ImageShader(curImage.rawImage.image , tmx, tmy, matrix4);
-      p.shader = imgShader;
+    if((v as Vertices).raw != null) {
+      if (curImage != null && curImage.rawImage.image != null) {
+        sky.TileMode tmx = sky.TileMode.clamp;
+        sky.TileMode tmy = sky.TileMode.clamp;
+        data.Float64List matrix4 = new Matrix4.identity().storage;
+        sky.ImageShader imgShader = new sky.ImageShader(curImage.rawImage.image , tmx, tmy, matrix4);
+        p.shader = imgShader;
+      }
+      p.color = new sky.Color.fromARGB(0xff,0xff, 0xff, 0xff);
+      canvas.drawVertices((v as Vertices).raw, sky.BlendMode.srcIn, p);
     }
-    //p.blendMode = sky.BlendMode.src;// ^ sky.BlendMode.multiply;
-    if((vertices as Vertices).raw != null) {
-      canvas.drawVertices((vertices as Vertices).raw, sky.BlendMode.srcIn, p);
-    }
-//    canvas.drawVertices((vertices as Vertices).raw2, sky.BlendMode.multiply, p);
-
   }
 
   @override
@@ -103,27 +101,6 @@ class TinyFlutterNCanvas extends core.CanvasRoze {
 
 class Vertices extends core.Vertices {
   sky.Vertices raw;
-
-  //
-//  Vertices(
-//      VertexMode mode,
-//      data.Float32List positions, {
-//        data.Float32List textureCoordinates,
-//        data.Int32List colors,
-//        data.Int32List indices,
-//      }) {
-//      //
-//      // dart:ui is wrong now(2018/2/19).
-//      //   if (colors != null && colors.length * 2 != positions.length)
-//      //   throw new ArgumentError('"positions" and "colors" lengths must match.');
-//      //
-//      raw = new sky.Vertices.raw(toSkyVertexMode(mode),
-//          positions,
-//          textureCoordinates: textureCoordinates,
-//          colors: colors,
-//          indices:indices);
-//  }
-
 
   Vertices.roze(List<double> vertces, List<double> cCoordinates, List<int> indices, int w, int h) :super.list(core.VertexMode.triangles, null){
       int n = vertces.length~/8;
@@ -147,15 +124,16 @@ class Vertices extends core.Vertices {
       bool isZero = true;
       if(textureSrc != null) {
         for (int i = 0; i < textureSrc.length; i++) {
-          textureSrc[i] = new Offset(cCoordinates[2 * i + 0]*w, cCoordinates[2 * i + 1]*h);
-          if(cCoordinates[2 * i + 0] != 0.0 || cCoordinates[2 * i + 1] != 0.0) {
+          textureSrc[i] =
+          new Offset(cCoordinates[2 * i + 0] * w, cCoordinates[2 * i + 1] * h);
+          if (cCoordinates[2 * i + 0] != 0.0 ||
+              cCoordinates[2 * i + 1] != 0.0) {
             isZero = false;
           };
         }
       }
-
       if(textureSrc == null || isZero == true) {
-        print("VV");
+
         raw = new sky.Vertices(
             toSkyVertexMode(core.VertexMode.triangles), positionsSrc,
             colors: colorsSrc,
@@ -171,11 +149,11 @@ class Vertices extends core.Vertices {
 
   Vertices.list(
       core.VertexMode mode,
-      List<double> positions, {
+      List<double> positions, int w, int h, {
         List<double> cCoordinates,
-        List<int> colors,
+        List<double> colors,
         List<int> indices,
-      }) :super.list(mode, positions, cCoordinates:cCoordinates, colors:colors, indices:indices){
+      }) :super.list(mode, positions, cCoordinates:cCoordinates, colors:null, indices:indices){
     List<Offset> positionsSrc = new List(positions.length~/2);
     List<Color> colorsSrc = new List(positionsSrc.length);
     List<Offset> textureSrc = null;
@@ -186,11 +164,15 @@ class Vertices extends core.Vertices {
 
     for(int i=0;i< positionsSrc.length;i++) {
       positionsSrc[i] = new Offset(positions[2*i+0], positions[2*i+1]);
-      colorsSrc[i] = new Color.fromARGB(colors[4*i+0], colors[4*i+1], colors[4*i+2], colors[4*i+3]);
+      colorsSrc[i] = new Color.fromARGB(
+          (255*colors[4*i+0]).toInt(),
+          (255*colors[4*i+1]).toInt(),
+          (255*colors[4*i+2]).toInt(),
+          (255*colors[4*i+3]).toInt());
     }
     if(textureSrc != null) {
       for (int i = 0; i < textureSrc.length; i++) {
-        textureSrc[i] = new Offset(cCoordinates[2 * i + 0], cCoordinates[2 * i + 1]);
+        textureSrc[i] = new Offset(w*cCoordinates[2 * i + 0], h*cCoordinates[2 * i + 1]);
       }
     }
     raw = new sky.Vertices(toSkyVertexMode(mode), positionsSrc,
