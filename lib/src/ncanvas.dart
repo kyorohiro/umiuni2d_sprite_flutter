@@ -92,10 +92,6 @@ class TinyFlutterNCanvas extends core.Canvas {
     }
   }
 
-  @override
-  void updateMatrix() {
-    //canvas.setMatrix(this.getMatrix().storage);
-  }
 }
 
 
