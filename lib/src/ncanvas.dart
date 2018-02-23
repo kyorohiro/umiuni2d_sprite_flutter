@@ -23,14 +23,14 @@ class TinyFlutterNCanvas extends core.Canvas {
 
 
   @override
-  void clearClip(core.Stage stage, {List<Object> cache: null}) {
+  void clearClip({List<Object> cache: null}) {
     flush();
     canvas.restore();
     canvas.save();
   }
 
   @override
-  void clipRect(core.Stage stage, core.Rect rect, {Matrix4 m:null}) {
+  void clipRect(core.Rect rect, {Matrix4 m:null}) {
     flush();
     if(m == null) {
        m = getMatrix();
