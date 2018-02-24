@@ -4,7 +4,7 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
   core.StageBase stageBase;
   TinyFlutterStage(this._builder, core.DisplayObject root,
     {
-      this.useDrawVertexForPrimtive: false, this.tickInterval: 15}
+      this.tickInterval: 15}
     ) : super(additionalConstraints: const BoxConstraints.expand())
       {
     stageBase = new core.StageBase(this);
@@ -61,7 +61,6 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
   @override
   core.GameWidget get builder => _builder;
   core.Canvas canvas;
-  bool useDrawVertexForPrimtive;
   int tickInterval;
 
 
@@ -151,7 +150,7 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
   void paint(PaintingContext context, Offset offset) {
     super.paint(context, offset);
     if (this.canvas == null) {
-        this.canvas = new TinyFlutterNCanvas(context.canvas, useDrawVertexForPrimtive: useDrawVertexForPrimtive);
+        this.canvas = new TinyFlutterNCanvas(context.canvas);
     }
     if (startable && kickCountForPaint <= 0) {
       kick(new DateTime.now().millisecondsSinceEpoch);
