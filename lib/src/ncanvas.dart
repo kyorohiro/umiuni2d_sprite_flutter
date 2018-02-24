@@ -60,9 +60,10 @@ class TinyFlutterNCanvas extends core.Canvas {
   void drawVertexWithColor(List<double> positions, List<double> colors, List<int> indices,{bool hasZ:false}) {
     Vertices v = new Vertices.list(core.VertexMode.triangles, positions, 0,0,colors: colors, indices:indices);
     if((v as Vertices).raw != null) {
+      print("draw color");
       Paint p = new Paint()..style = sky.PaintingStyle.fill;
       p.color = new sky.Color.fromARGB(0xff,0xff, 0xff, 0xff);
-      canvas.drawVertices((v as Vertices).raw, sky.BlendMode.srcIn, p);
+      canvas.drawVertices((v as Vertices).raw, sky.BlendMode.color, p);
     }
   }
 
@@ -161,10 +162,10 @@ class Vertices extends core.Vertices {
     for(int i=0;i< positionsSrc.length;i++) {
       positionsSrc[i] = new Offset(positions[2*i+0], positions[2*i+1]);
       colorsSrc[i] = new Color.fromARGB(
+          (255*colors[4*i+3]).toInt(),
           (255*colors[4*i+0]).toInt(),
           (255*colors[4*i+1]).toInt(),
-          (255*colors[4*i+2]).toInt(),
-          (255*colors[4*i+3]).toInt());
+          (255*colors[4*i+2]).toInt());
     }
     if(textureSrc != null) {
       for (int i = 0; i < textureSrc.length; i++) {
