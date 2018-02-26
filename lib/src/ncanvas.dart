@@ -2,13 +2,13 @@ part of umiuni2d_sprite_flutter;
 
 class TinyFlutterNCanvas extends core.Canvas {
 
-  Canvas canvas;
+  flu.Canvas canvas;
 
   TinyFlutterNCanvas(this.canvas):super(2.0, -2.0);
 
-  Paint toPaintWithRawFlutter(core.Paint p) {
-    Paint pp = new Paint();
-    pp.color = new Color(p.color.value);
+  flu.Paint toPaintWithRawFlutter(core.Paint p) {
+    flu.Paint pp = new flu.Paint();
+    pp.color = new flu.Color(p.color.value);
     pp.strokeWidth = p.strokeWidth;
     switch (p.style) {
       case core.PaintStyle.fill:
@@ -43,7 +43,7 @@ class TinyFlutterNCanvas extends core.Canvas {
     v2 = m * v2;
     v3 = m * v3;
     v4 = m * v4;
-    Path path = new Path();
+    flu.Path path = new flu.Path();
     path.moveTo(v1.x, v1.y);
     path.lineTo(v2.x, v2.y);
     path.lineTo(v3.x, v3.y);
@@ -57,37 +57,33 @@ class TinyFlutterNCanvas extends core.Canvas {
     canvas.save();
   }
 
+  core.ImageShader createImageShader(core.Image image) {
+    return new ImageShader(image);
+  }
   void drawVertexWithColor(List<double> positions, List<double> colors, List<int> indices,{bool hasZ:false}) {
     Vertices v = new Vertices.list(core.VertexMode.triangles, positions, 0,0,colors: colors, indices:indices);
     if((v as Vertices).raw != null) {
       print("draw color");
-      Paint p = new Paint()..style = sky.PaintingStyle.fill;
+      flu.Paint p = new flu.Paint()..style = sky.PaintingStyle.fill;
       p.color = new sky.Color.fromARGB(0xff,0xff, 0xff, 0xff);
       canvas.drawVertices((v as Vertices).raw, sky.BlendMode.color, p);
     }
   }
 
-  void drawVertexWithImage(List<double> positions, List<double> cCoordinates, List<int> indices, core.Image img,
+  void drawVertexWithImage(List<double> positions, List<double> cCoordinates, List<int> indices, core.ImageShader imgShader,
       {List<double> colors, bool hasZ:false}) {
-    TinyFlutterImage curImage = (img as TinyFlutterImage);
 
     Vertices v = new Vertices.list(
         core.VertexMode.triangles,
         positions,
-        img.w,img.h,
+        imgShader.w, imgShader.h,
         cCoordinates:cCoordinates,
         colors: colors,
         indices:indices,);
     sky.Paint p = new sky.Paint()..style = sky.PaintingStyle.fill;
 
     if((v as Vertices).raw != null) {
-      if (curImage != null && curImage.rawImage.image != null) {
-        sky.TileMode tmx = sky.TileMode.clamp;
-        sky.TileMode tmy = sky.TileMode.clamp;
-        data.Float64List matrix4 = new Matrix4.identity().storage;
-        sky.ImageShader imgShader = new sky.ImageShader(curImage.rawImage.image , tmx, tmy, matrix4);
-        p.shader = imgShader;
-      }
+      p.shader = (imgShader as ImageShader).raw;
       p.color = new sky.Color.fromARGB(0xff,0xff, 0xff, 0xff);
       canvas.drawVertices((v as Vertices).raw, sky.BlendMode.srcIn, p);
     }
@@ -99,50 +95,7 @@ class TinyFlutterNCanvas extends core.Canvas {
 class Vertices extends core.Vertices {
   sky.Vertices raw;
 
-  Vertices.roze(List<double> vertces, List<double> cCoordinates, List<int> indices, int w, int h) :super.list(core.VertexMode.triangles, null){
-      int n = vertces.length~/8;
-      List<Offset> positionsSrc = new List(n);
-      List<Color> colorsSrc = new List(n);
-      List<Offset> textureSrc =  null;//new List(n);
 
-      for(int i=0;i<n;i++) {
-        positionsSrc[i] = new Offset(vertces[8*i+0], vertces[8*i+1]);//3,4,1
-        colorsSrc[i] = new Color.fromARGB(
-            (255*vertces[8*i+6]).toInt(),
-            (255*vertces[8*i+3]).toInt(),
-            (255*vertces[8*i+4]).toInt(),
-            (255*vertces[8*i+5]).toInt()
-            );
-      }
-      if(cCoordinates != null && cCoordinates.length > 0){
-        textureSrc = new List(positionsSrc.length);
-      }
-
-      bool isZero = true;
-      if(textureSrc != null) {
-        for (int i = 0; i < textureSrc.length; i++) {
-          textureSrc[i] =
-          new Offset(cCoordinates[2 * i + 0] * w, cCoordinates[2 * i + 1] * h);
-          if (cCoordinates[2 * i + 0] != 0.0 ||
-              cCoordinates[2 * i + 1] != 0.0) {
-            isZero = false;
-          };
-        }
-      }
-      if(textureSrc == null || isZero == true) {
-
-        raw = new sky.Vertices(
-            toSkyVertexMode(core.VertexMode.triangles), positionsSrc,
-            colors: colorsSrc,
-            indices: indices);
-      } else {
-        raw = new sky.Vertices(
-            toSkyVertexMode(core.VertexMode.triangles), positionsSrc,
-            textureCoordinates: textureSrc,
-            colors: colorsSrc,
-            indices: indices);
-      }
-    }
 
   Vertices.list(
       core.VertexMode mode,
@@ -151,17 +104,17 @@ class Vertices extends core.Vertices {
         List<double> colors,
         List<int> indices,
       }) :super.list(mode, positions, cCoordinates:cCoordinates, colors:null, indices:indices){
-    List<Offset> positionsSrc = new List(positions.length~/2);
-    List<Color> colorsSrc = new List(positionsSrc.length);
-    List<Offset> textureSrc = null;
+    List<flu.Offset> positionsSrc = new List(positions.length~/2);
+    List<flu.Color> colorsSrc = new List(positionsSrc.length);
+    List<flu.Offset> textureSrc = null;
     if(cCoordinates != null){
       textureSrc = new List(cCoordinates.length~/2);
     }
 
 
     for(int i=0;i< positionsSrc.length;i++) {
-      positionsSrc[i] = new Offset(positions[2*i+0], positions[2*i+1]);
-      colorsSrc[i] = new Color.fromARGB(
+      positionsSrc[i] = new flu.Offset(positions[2*i+0], positions[2*i+1]);
+      colorsSrc[i] = new flu.Color.fromARGB(
           (255*colors[4*i+3]).toInt(),
           (255*colors[4*i+0]).toInt(),
           (255*colors[4*i+1]).toInt(),
@@ -169,7 +122,7 @@ class Vertices extends core.Vertices {
     }
     if(textureSrc != null) {
       for (int i = 0; i < textureSrc.length; i++) {
-        textureSrc[i] = new Offset(w*cCoordinates[2 * i + 0], h*cCoordinates[2 * i + 1]);
+        textureSrc[i] = new flu.Offset(w*cCoordinates[2 * i + 0], h*cCoordinates[2 * i + 1]);
       }
     }
     raw = new sky.Vertices(toSkyVertexMode(mode), positionsSrc,
@@ -187,5 +140,28 @@ class Vertices extends core.Vertices {
         return sky.VertexMode.triangleStrip;
     }
     return sky.VertexMode.triangles;
+  }
+}
+
+
+class ImageShader extends core.ImageShader {
+  sky.ImageShader _imgShader;
+  sky.ImageShader get raw => _imgShader;
+  int _w;
+  int _h;
+  int get w => _w;
+  int get h => _h;
+  ImageShader(core.Image rawImage) {
+    sky.TileMode tmx = sky.TileMode.clamp;
+    sky.TileMode tmy = sky.TileMode.clamp;
+    data.Float64List matrix4 = new Matrix4.identity().storage;
+    TinyFlutterImage curImage = (rawImage as TinyFlutterImage);
+    _w = curImage.w;
+    _h = curImage.h;
+    _imgShader = new sky.ImageShader(curImage.rawImage.image , tmx, tmy, matrix4);
+  }
+
+  void dispose() {
+    _imgShader = null;
   }
 }

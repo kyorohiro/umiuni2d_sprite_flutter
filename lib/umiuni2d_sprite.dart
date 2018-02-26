@@ -1,9 +1,9 @@
 library umiuni2d_sprite_flutter;
 
-import 'package:flutter/widgets.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart' as flu;
+import 'package:flutter/services.dart' as flu;
+import 'package:flutter/rendering.dart' as flu;
+import 'package:flutter/scheduler.dart' as flu;
 import 'dart:ui' as sky;
 import 'dart:async';
 import 'dart:math'as math;
@@ -20,7 +20,7 @@ part 'src/loader.dart';
 //
 //
 
-class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidget {
+class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameWidget {
   core.Stage _stage;
   core.Stage get stage => _stage;
 
@@ -40,14 +40,14 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
   }
 
   @override
-  RenderObject createRenderObject(BuildContext context) {
+  flu.RenderObject createRenderObject(flu.BuildContext context) {
     return (stage as TinyFlutterStage);
   }
 
   bool _isRun = false;
   void run() {
     if(_isRun == false) {
-      runApp(this);
+      flu.runApp(this);
       _isRun = true;
     }
   }
@@ -114,4 +114,7 @@ class GameWidget extends SingleChildRenderObjectWidget implements core.GameWidge
     return sky.window.devicePixelRatio;
   }
 
+  Future<core.ImageShader> createImageShader(core.Image image) async {
+    return null;
+  }
 }
