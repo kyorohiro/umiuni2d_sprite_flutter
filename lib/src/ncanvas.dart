@@ -54,7 +54,7 @@ class TinyFlutterNCanvas extends core.Canvas {
         <int>[0,1,2,0,2,3]));
   }
 
-  void clipVertex(core.Vertices vertices, {bool hasZ:false}) {
+  void clipVertex(core.Vertices vertices) {
     List<double> positions = (vertices as Vertices)._positions;
     List<int> indices  = (vertices as Vertices)._indices;
     flush();
@@ -62,32 +62,18 @@ class TinyFlutterNCanvas extends core.Canvas {
       return;
     }
 
-    if(hasZ) {
-      int length = indices.length;
-      flu.Path path = new flu.Path();
-      for(int i=0;i<length;i++) {
-        int index = indices[i];
-        if(0==i % 3) {
-          path.moveTo(positions[3 * index + 0], positions[3 * index + 1]);
-        } else {
-          path.lineTo(positions[3 * index + 0], positions[3 * index + 1]);
-        }
+    int length = indices.length;
+    flu.Path path = new flu.Path();
+    for(int i=0;i<length;i++) {
+      int index = indices[i];
+      if(0==i % 3) {
+        path.moveTo(positions[2 * index + 0], positions[2 * index + 1]);
+      } else {
+        path.lineTo(positions[2 * index + 0], positions[2 * index + 1]);
       }
-      canvas.clipPath(path);
-
-    } else {
-      int length = indices.length;
-      flu.Path path = new flu.Path();
-      for(int i=0;i<length;i++) {
-        int index = indices[i];
-        if(0==i % 3) {
-          path.moveTo(positions[2 * index + 0], positions[2 * index + 1]);
-        } else {
-          path.lineTo(positions[2 * index + 0], positions[2 * index + 1]);
-        }
-      }
-      canvas.clipPath(path);
     }
+    canvas.clipPath(path);
+
   }
 
   @override
