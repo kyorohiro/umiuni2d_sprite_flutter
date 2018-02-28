@@ -48,7 +48,46 @@ class TinyFlutterNCanvas extends core.Canvas {
     path.lineTo(v2.x, v2.y);
     path.lineTo(v3.x, v3.y);
     path.lineTo(v4.x, v4.y);
-    canvas.clipPath(path);
+//    canvas.clipPath(path);
+    clipVertex(new Vertices.list(
+        <double> [v1.x, v1.y,v2.x, v2.y, v3.x, v3.y,v4.x, v4.y],
+        <int>[0,1,2,0,2,3]));
+  }
+
+  void clipVertex(core.Vertices vertices, {bool hasZ:false}) {
+    List<double> positions = (vertices as Vertices)._positions;
+    List<int> indices  = (vertices as Vertices)._indices;
+    flush();
+    if(positions.length <= 1) {
+      return;
+    }
+
+    if(hasZ) {
+      int length = indices.length;
+      flu.Path path = new flu.Path();
+      for(int i=0;i<length;i++) {
+        int index = indices[i];
+        if(0==i % 3) {
+          path.moveTo(positions[3 * index + 0], positions[3 * index + 1]);
+        } else {
+          path.lineTo(positions[3 * index + 0], positions[3 * index + 1]);
+        }
+      }
+      canvas.clipPath(path);
+
+    } else {
+      int length = indices.length;
+      flu.Path path = new flu.Path();
+      for(int i=0;i<length;i++) {
+        int index = indices[i];
+        if(0==i % 3) {
+          path.moveTo(positions[2 * index + 0], positions[2 * index + 1]);
+        } else {
+          path.lineTo(positions[2 * index + 0], positions[2 * index + 1]);
+        }
+      }
+      canvas.clipPath(path);
+    }
   }
 
   @override
@@ -62,8 +101,9 @@ class TinyFlutterNCanvas extends core.Canvas {
   }
 
   core.Vertices createVertices(List<double> positions, List<double> colors, List<int> indices, {List<double> cCoordinates}) {
-    return new Vertices.list(positions, colors, indices, cCoordinates: cCoordinates);
+    return new Vertices.list(positions, indices, colors:colors, cCoordinates: cCoordinates);
   }
+
 
   void drawVertexWithColor(core.Vertices vertices, {bool hasZ:false}) {
     if((vertices as Vertices).raw != null) {
@@ -92,14 +132,20 @@ class TinyFlutterNCanvas extends core.Canvas {
 
 class Vertices extends core.Vertices {
   sky.Vertices raw;
-
-
+  List<double> _positions;
+  List<int> _indices;
 
   Vertices.list(
-      List<double> positions, List<double> colors, List<int> indices,
-      {List<double> cCoordinates}){
+      List<double> positions, List<int> indices,
+      { List<double> colors, List<double> cCoordinates}){
     List<flu.Offset> positionsSrc = new List(positions.length~/2);
-    List<flu.Color> colorsSrc = new List(positionsSrc.length);
+    //
+    //
+    _positions = positions.toList(growable: false);
+    _indices = indices.toList(growable: false);
+
+
+    List<flu.Color> colorsSrc = (colors == null?null:new List(positionsSrc.length));
     List<flu.Offset> textureSrc = null;
     if(cCoordinates != null){
       textureSrc = new List(cCoordinates.length~/2);
@@ -108,12 +154,18 @@ class Vertices extends core.Vertices {
 
     for(int i=0;i< positionsSrc.length;i++) {
       positionsSrc[i] = new flu.Offset(positions[2*i+0], positions[2*i+1]);
-      colorsSrc[i] = new flu.Color.fromARGB(
-          (255*colors[4*i+3]).toInt(),
-          (255*colors[4*i+0]).toInt(),
-          (255*colors[4*i+1]).toInt(),
-          (255*colors[4*i+2]).toInt());
     }
+
+    if(colorsSrc != null) {
+      for (int i = 0; i < positionsSrc.length; i++) {
+        colorsSrc[i] = new flu.Color.fromARGB(
+            (255 * colors[4 * i + 3]).toInt(),
+            (255 * colors[4 * i + 0]).toInt(),
+            (255 * colors[4 * i + 1]).toInt(),
+            (255 * colors[4 * i + 2]).toInt());
+      }
+    }
+
     if(textureSrc != null) {
       for (int i = 0; i < textureSrc.length; i++) {
         textureSrc[i] = new flu.Offset(cCoordinates[2 * i + 0], cCoordinates[2 * i + 1]);
