@@ -3,7 +3,7 @@ part of umiuni2d_sprite_flutter;
 
 
 class TinyFlutterImage implements core.Image {
-  ImageInfo rawImage;
+  flu.ImageInfo rawImage;
   TinyFlutterImage(this.rawImage);
 
   @override
@@ -17,18 +17,18 @@ class TinyFlutterImage implements core.Image {
 }
 
 class ResourceLoader {
-  static AssetBundle getAssetBundle() {
-    if (rootBundle != null) {
-      return rootBundle;
+  static flu.AssetBundle getAssetBundle() {
+    if (flu.rootBundle != null) {
+      return flu.rootBundle;
     } else {
-      return new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+      return new flu.NetworkAssetBundle(new Uri.directory(Uri.base.origin));
     }
   }
 
-  static Future<ImageInfo> loadImage(String url) async {
-    ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
-    Completer<ImageInfo> completer = new Completer<ImageInfo>();
-    void listener(ImageInfo frame, bool synchronousCall) {
+  static Future<flu.ImageInfo> loadImage(String url) async {
+    flu.ImageStream stream = new flu.AssetImage(url, bundle: getAssetBundle()).resolve(flu.ImageConfiguration.empty);
+    Completer<flu.ImageInfo> completer = new Completer<flu.ImageInfo>();
+    void listener(flu.ImageInfo frame, bool synchronousCall) {
       completer.complete(frame);
     }
     stream.addListener(listener);
@@ -36,7 +36,7 @@ class ResourceLoader {
   }
 
   static Future<String> loadString(String url) async {
-    AssetBundle bundle = getAssetBundle();
+    flu.AssetBundle bundle = getAssetBundle();
     String b = await bundle.loadString(url);
     //print("-a-${url} -- ${b}");
     return b;
@@ -44,15 +44,15 @@ class ResourceLoader {
 
   // TODO
   static Future<data.Uint8List> loadBytes(String url) async {
-    AssetBundle bundle = getAssetBundle();
-    ByteData b = await bundle.load(url);
+    flu.AssetBundle bundle = getAssetBundle();
+    flu.ByteData b = await bundle.load(url);
     data.ByteData d1 = b;//await DataPipeDrainer.drainHandle(b);
     //print("-a-${url} -- ${b}");
     return d1.buffer.asUint8List();//b;
   }
 
-  static Future<ByteData> loadMojoData(String url) async {
-    AssetBundle bundle = getAssetBundle();
+  static Future<flu.ByteData> loadMojoData(String url) async {
+    flu.AssetBundle bundle = getAssetBundle();
     return await bundle.load(url);
   }
 }

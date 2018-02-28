@@ -1,11 +1,11 @@
 part of umiuni2d_sprite_flutter;
 
-class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
+class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   core.StageBase stageBase;
   TinyFlutterStage(this._builder, core.DisplayObject root,
     {
       this.tickInterval: 15}
-    ) : super(additionalConstraints: const BoxConstraints.expand())
+    ) : super(additionalConstraints: const flu.BoxConstraints.expand())
       {
     stageBase = new core.StageBase(this);
     this.root = root;
@@ -78,7 +78,7 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
     }
     isInit = false;
     animeIsStart = true;
-    animeId = SchedulerBinding.instance.scheduleFrameCallback(_innerTick);
+    animeId = flu.SchedulerBinding.instance.scheduleFrameCallback(_innerTick);
   }
 
  @override
@@ -100,7 +100,7 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
     }
     this.markNeedsPaint();
     if (animeIsStart == true) {
-      animeId = SchedulerBinding.instance.scheduleFrameCallback(_innerTick);
+      animeId = flu.SchedulerBinding.instance.scheduleFrameCallback(_innerTick);
     }
 
     //
@@ -125,7 +125,7 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
   @override
   void stop() {
     if (animeIsStart == true && animeId != null) {
-      SchedulerBinding.instance.cancelFrameCallbackWithId(animeId);
+      flu.SchedulerBinding.instance.cancelFrameCallbackWithId(animeId);
     }
     animeIsStart = false;
   }
@@ -137,8 +137,8 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
   }
 
   @override
-  bool hitTest(HitTestResult result, {Offset position}) {
-    result.add(new BoxHitTestEntry(this, position));
+  bool hitTest(flu.HitTestResult result, {flu.Offset position}) {
+    result.add(new flu.BoxHitTestEntry(this, position));
     return true;
   }
 
@@ -147,7 +147,7 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
 
   int kickCountForPaint = 0;
   @override
-  void paint(PaintingContext context, Offset offset) {
+  void paint(flu.PaintingContext context, flu.Offset offset) {
     super.paint(context, offset);
     if (this.canvas == null) {
         this.canvas = new TinyFlutterNCanvas(context.canvas);
@@ -162,16 +162,16 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
     this.canvas.flush();
   }
 
-  core.StagePointerType toEvent(PointerEvent e) {
-    if (e is PointerUpEvent) {
+  core.StagePointerType toEvent(flu.PointerEvent e) {
+    if (e is flu.PointerUpEvent) {
       return core.StagePointerType.UP;
-    } else if (e is PointerDownEvent) {
+    } else if (e is flu.PointerDownEvent) {
       return core.StagePointerType.DOWN;
-    } else if (e is PointerCancelEvent) {
+    } else if (e is flu.PointerCancelEvent) {
       return core.StagePointerType.CANCEL;
-    } else if (e is PointerMoveEvent) {
+    } else if (e is flu.PointerMoveEvent) {
       return core.StagePointerType.MOVE;
-    } else if (e is PointerUpEvent) {
+    } else if (e is flu.PointerUpEvent) {
       return core.StagePointerType.UP;
     } else {
       return core.StagePointerType.CANCEL;
@@ -179,18 +179,18 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
   }
 
   @override
-  void handleEvent(PointerEvent event, HitTestEntry en) {
-    if (!(event is PointerEvent || !(en is BoxHitTestEntry))) {
+  void handleEvent(flu.PointerEvent event, flu.HitTestEntry en) {
+    if (!(event is flu.PointerEvent || !(en is flu.BoxHitTestEntry))) {
       return;
     }
 
-    BoxHitTestEntry entry = en;
-    PointerEvent e = event;
+    flu.BoxHitTestEntry entry = en;
+    flu.PointerEvent e = event;
     if (!touchPoints.containsKey(e.pointer)) {
       touchPoints[e.pointer] = new TouchPoint(-1.0, -1.0);
     }
 
-    if (event is PointerDownEvent) {
+    if (event is flu.PointerDownEvent) {
       touchPoints[e.pointer].x = entry.localPosition.dx;
       touchPoints[e.pointer].y = entry.localPosition.dy;
     } else {
@@ -199,11 +199,11 @@ class TinyFlutterStage extends RenderConstrainedBox implements core.Stage {
     }
     kickTouch(this, e.pointer, toEvent(event), touchPoints[e.pointer].x, touchPoints[e.pointer].y);
 
-    if (event is PointerUpEvent) {
+    if (event is flu.PointerUpEvent) {
       touchPoints.remove(e.pointer);
     }
 
-    if (event is PointerCancelEvent) {
+    if (event is flu.PointerCancelEvent) {
       touchPoints.clear();
     }
   }
