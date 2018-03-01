@@ -68,7 +68,6 @@ class TinyFlutterNCanvas extends core.Canvas {
 
   void drawVertexWithColor(core.Vertices vertices, {bool hasZ:false}) {
     if((vertices as Vertices).raw != null) {
-      print("draw color");
       flu.Paint p = new flu.Paint()..style = sky.PaintingStyle.fill;
       p.color = new sky.Color.fromARGB(0xff,0xff, 0xff, 0xff);
       canvas.drawVertices((vertices as Vertices).raw, sky.BlendMode.color, p);

@@ -8,9 +8,8 @@ dependencies:
   flutter:
     sdk: flutter
   umiuni2d_sprite:
-    git:
-      url: https://github.com/kyorohiro/umiuni2d_sprite.git
-      ref: v0.0.4
+       path: ../umiuni2d_sprite
+
 
 dev_dependencies:
   test: ^0.12.0
