@@ -2,13 +2,13 @@ part of umiuni2d_sprite_flutter;
 
 class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   core.StageBase stageBase;
-  TinyFlutterStage(this._builder, core.DisplayObject root,
+  TinyFlutterStage(this._builder,
+      core.DisplayObject root,core.DisplayObject background,core.DisplayObject front,
     {
       this.tickInterval: 15}
     ) : super(additionalConstraints: const flu.BoxConstraints.expand())
       {
-    stageBase = new core.StageBase(this);
-    this.root = root;
+    stageBase = new core.StageBase(this, root, background, front);
     this.canvas = null;
     init();
   }

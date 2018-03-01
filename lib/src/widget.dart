@@ -10,13 +10,15 @@ class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameW
 
   GameWidget({
     core.DisplayObject root,
+    core.DisplayObject background,
+    core.DisplayObject front,
     double width:400.0,
     double height:300.0,
     this.assetsRoot: "web/"}) {
     if(root == null) {
       root = new core.GameRoot(width, height);
     }
-    this._stage = this.createStage(root: root);
+    this._stage = this.createStage(root: root, background: background, front: front);
   }
 
   @override
@@ -61,11 +63,11 @@ class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameW
   bool useDrawVertexForPrimtive = true;
 
   @override
-  core.Stage createStage({core.DisplayObject root}) {
+  core.Stage createStage({core.DisplayObject root, core.DisplayObject background,core.DisplayObject front}) {
     if(root == null) {
       root = new core.DisplayObject();
     }
-    return new TinyFlutterStage(this, root);
+    return new TinyFlutterStage(this, root, background, front);
   }
 
   @override
