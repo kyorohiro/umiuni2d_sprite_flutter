@@ -222,6 +222,9 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
 
   @override
   void kick(int timeStamp) {
+    if (!startable) {
+      return;
+    }
     if(this._builder.onLoop != null) {
       this._builder.onLoop(this._builder);
     }
