@@ -113,7 +113,7 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
     if (timeCount > 60) {
       int cTimeEpoc = timeStamp.inMilliseconds;
       if (cTimeEpoc - timeEpoc != 0) {
-        print("fps[A]? : ${1000~/((cTimeEpoc-timeEpoc)/timeCount)} ${timeCount} ${(cTimeEpoc-timeEpoc)/timeCount}");
+        print("fps[A]? : ${1000~/((cTimeEpoc-timeEpoc)/timeCount)} ${timeCount.toString()} ${(cTimeEpoc-timeEpoc)/timeCount}");
       }
       timeCount = 0;
       timeEpoc = cTimeEpoc;
@@ -222,15 +222,15 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   core.DisplayObject get front => stageBase.front;
 
   @override
-  void set root(core.DisplayObject v) {
+  set root(core.DisplayObject v) {
     stageBase.root = v;
   }
 
-  void set background(core.DisplayObject v) {
+  set background(core.DisplayObject v) {
     stageBase.background = v;
   }
 
-  void set front(core.DisplayObject v) {
+  set front(core.DisplayObject v) {
     stageBase.front = v;
   }
 
@@ -270,11 +270,10 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
     return stageBase.popMatrix();
   }
 
-  @override
   Matrix4 getMatrix() {
     return stageBase.getMatrix();
   }
-
+/*
   @override
   double get xFromMat => stageBase.xFromMat;
 
@@ -292,7 +291,7 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
 
   @override
   double get szFromMat => stageBase.szFromMat;
-
+*/
   @override
   Vector3 getCurrentPositionOnDisplayObject(double globalX, double globalY) {
     return stageBase.getCurrentPositionOnDisplayObject(globalX, globalY);
