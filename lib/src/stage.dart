@@ -2,7 +2,7 @@ part of umiuni2d_sprite_flutter;
 
 class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   core.StageBase stageBase;
-  TinyFlutterStage(this._builder,
+  TinyFlutterStage(this._context,
       core.DisplayObject root,core.DisplayObject background,core.DisplayObject front,
     {
       this.tickInterval: 15}
@@ -56,10 +56,10 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   static const int kMaxOfTouch = 5;
   Map<int, TouchPoint> touchPoints = {};
 
-  GameWidget _builder;
+  GameWidget _context;
 
   @override
-  core.GameWidget get builder => _builder;
+  core.GameWidget get context => _context;
   core.Canvas canvas;
   int tickInterval;
 
@@ -240,8 +240,8 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
     if (!startable) {
       return;
     }
-    if(this._builder.onLoop != null) {
-      this._builder.onLoop(this._builder);
+    if(this._context.onLoop != null) {
+      this._context.onLoop(this._context);
     }
     kickCountForPaint++;
     stageBase.kick(timeStamp);
