@@ -3,6 +3,7 @@ part of umiuni2d_sprite_flutter;
 class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameWidget {
   core.Stage _stage;
   core.Stage get stage => _stage;
+  Map<String, Object> objects = {};
 
   core.OnStart onStart = null;
   core.OnLoop onLoop = null;
