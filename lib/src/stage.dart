@@ -68,7 +68,9 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
 
   @override
   void updateSize(double w, double h) {
+    background.changeStageStatus(this, null);
     root.changeStageStatus(this, null);
+    front.changeStageStatus(this, null);
   }
 
   @override
@@ -134,6 +136,12 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   void performLayout() {
     size = constraints.biggest;
     startable = true;
+    print(">>>test>>> " + w.toString() + " " + h.toString());
+    new Future((){
+      try {
+        this.updateSize(w, h);
+      } catch(e){}
+    });
   }
 
   @override
@@ -273,25 +281,7 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   Matrix4 getMatrix() {
     return stageBase.getMatrix();
   }
-/*
-  @override
-  double get xFromMat => stageBase.xFromMat;
 
-  @override
-  double get yFromMat => stageBase.yFromMat;
-
-  @override
-  double get zFromMat => stageBase.zFromMat;
-
-  @override
-  double get sxFromMat => stageBase.sxFromMat;
-
-  @override
-  double get syFromMat => stageBase.syFromMat;
-
-  @override
-  double get szFromMat => stageBase.szFromMat;
-*/
   @override
   Vector3 getCurrentPositionOnDisplayObject(double globalX, double globalY) {
     return stageBase.getCurrentPositionOnDisplayObject(globalX, globalY);

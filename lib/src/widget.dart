@@ -53,7 +53,6 @@ class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameW
     return this;
   }
 
-
   //
   //
   String assetsRoot;
