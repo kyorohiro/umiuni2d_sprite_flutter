@@ -4,7 +4,7 @@ class TinyFlutterNCanvas extends core.Canvas {
 
   flu.Canvas canvas;
 
-  TinyFlutterNCanvas(this.canvas):super(2.0, -2.0, true);
+  TinyFlutterNCanvas(this.canvas):super(2.0, -2.0, true, new DrawingShell(2.0, -2.0, useLengthHAtCCoordinates: true));
 
   flu.Paint toPaintWithRawFlutter(core.Paint p) {
     flu.Paint pp = new flu.Paint();
