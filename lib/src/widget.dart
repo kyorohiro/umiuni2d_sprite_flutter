@@ -96,7 +96,7 @@ class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameW
     return sky.window.devicePixelRatio;
   }
 
-  Future<core.ImageShader> createImageShader(core.Image image) async {
-    return null;
-  }
+  //Future<core.ImageShader> createImageShader(core.Image image) async {
+  //  return null;
+  //}
 }
