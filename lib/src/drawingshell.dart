@@ -29,13 +29,7 @@ class DrawingShell extends core.DrawingShell {
         if(this.flImg == null) {
           canvas.drawVertexWithColor(canvas.createVertices(this.flVert, this.flColor, this.flInde));
         } else {
-          ImageShader s = null;
-          if(canvas.ims.containsKey(this.flImg )) {
-            s = canvas.ims[this.flImg ];
-          } else{
-            s = canvas.createImageShader(this.flImg);
-            canvas.ims[this.flImg] = s;
-          }
+          ImageShader s = canvas.getImageShader(this.flImg);
           canvas.drawVertexWithImage(canvas.createVertices(this.flVert, this.flColor, this.flInde, cCoordinates: this.flTex), s);
         }
       }
