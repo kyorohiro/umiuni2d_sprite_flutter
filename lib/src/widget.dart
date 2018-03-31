@@ -96,6 +96,19 @@ class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameW
     return sky.window.devicePixelRatio;
   }
 
+  Map<String, Object> cached = {};
+  Future<core.Image> loadAndCacheImage(String path) async {
+    cached[path] = await loadImage(path);
+    return cached[path] as core.Image;
+  }
+
+  core.Image getCachedImage(String path) {
+    if(cached.containsKey(path)) {
+      return cached[path];
+    } else {
+      return null;
+    }
+  }
   //Future<core.ImageShader> createImageShader(core.Image image) async {
   //  return null;
   //}
