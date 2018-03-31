@@ -286,6 +286,14 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   Vector3 getCurrentPositionOnDisplayObject(double globalX, double globalY) {
     return stageBase.getCurrentPositionOnDisplayObject(globalX, globalY);
   }
+
+  core.KeyEventButton createKeyEventButton(String key) {
+    return stageBase.createKeyEventButton(key);
+  }
+
+  List<core.KeyEventButton> getKeyEventButtonList(String key) {
+    return stageBase.getKeyEventButtonList(key);
+  }
 }
 
 class TouchPoint {
