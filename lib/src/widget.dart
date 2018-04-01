@@ -3,6 +3,7 @@ part of umiuni2d_sprite_flutter;
 class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameWidget {
   core.Stage _stage;
   core.Stage get stage => _stage;
+  Map<String, Object> objects = {};
 
   core.OnStart onStart = null;
   core.OnLoop onLoop = null;
@@ -52,7 +53,6 @@ class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameW
     return this;
   }
 
-
   //
   //
   String assetsRoot;
@@ -96,7 +96,20 @@ class GameWidget extends flu.SingleChildRenderObjectWidget implements core.GameW
     return sky.window.devicePixelRatio;
   }
 
-  Future<core.ImageShader> createImageShader(core.Image image) async {
-    return null;
+  Map<String, Object> cached = {};
+  Future<core.Image> loadAndCacheImage(String path) async {
+    cached[path] = await loadImage(path);
+    return cached[path] as core.Image;
   }
+
+  core.Image getCachedImage(String path) {
+    if(cached.containsKey(path)) {
+      return cached[path];
+    } else {
+      return null;
+    }
+  }
+  //Future<core.ImageShader> createImageShader(core.Image image) async {
+  //  return null;
+  //}
 }

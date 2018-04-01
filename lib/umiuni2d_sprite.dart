@@ -18,6 +18,7 @@ part 'src/stage.dart';
 part 'src/ncanvas.dart';
 part 'src/loader.dart';
 part 'src/widget.dart';
+part 'src/drawingshell.dart';
 //
 //
 

@@ -2,7 +2,7 @@ part of umiuni2d_sprite_flutter;
 
 class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   core.StageBase stageBase;
-  TinyFlutterStage(this._builder,
+  TinyFlutterStage(this._context,
       core.DisplayObject root,core.DisplayObject background,core.DisplayObject front,
     {
       this.tickInterval: 15}
@@ -56,10 +56,10 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   static const int kMaxOfTouch = 5;
   Map<int, TouchPoint> touchPoints = {};
 
-  GameWidget _builder;
+  GameWidget _context;
 
   @override
-  core.GameWidget get builder => _builder;
+  core.GameWidget get context => _context;
   core.Canvas canvas;
   int tickInterval;
 
@@ -68,7 +68,9 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
 
   @override
   void updateSize(double w, double h) {
+    background.changeStageStatus(this, null);
     root.changeStageStatus(this, null);
+    front.changeStageStatus(this, null);
   }
 
   @override
@@ -113,7 +115,7 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
     if (timeCount > 60) {
       int cTimeEpoc = timeStamp.inMilliseconds;
       if (cTimeEpoc - timeEpoc != 0) {
-        print("fps[A]? : ${1000~/((cTimeEpoc-timeEpoc)/timeCount)} ${timeCount} ${(cTimeEpoc-timeEpoc)/timeCount}");
+        print("fps[A]? : ${1000~/((cTimeEpoc-timeEpoc)/timeCount)} ${timeCount.toString()} ${(cTimeEpoc-timeEpoc)/timeCount}");
       }
       timeCount = 0;
       timeEpoc = cTimeEpoc;
@@ -134,6 +136,12 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   void performLayout() {
     size = constraints.biggest;
     startable = true;
+    print(">>>test>>> " + w.toString() + " " + h.toString());
+    new Future((){
+      try {
+        this.updateSize(w, h);
+      } catch(e){}
+    });
   }
 
   @override
@@ -222,15 +230,15 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
   core.DisplayObject get front => stageBase.front;
 
   @override
-  void set root(core.DisplayObject v) {
+  set root(core.DisplayObject v) {
     stageBase.root = v;
   }
 
-  void set background(core.DisplayObject v) {
+  set background(core.DisplayObject v) {
     stageBase.background = v;
   }
 
-  void set front(core.DisplayObject v) {
+  set front(core.DisplayObject v) {
     stageBase.front = v;
   }
 
@@ -240,8 +248,8 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
     if (!startable) {
       return;
     }
-    if(this._builder.onLoop != null) {
-      this._builder.onLoop(this._builder);
+    if(this._context.onLoop != null) {
+      this._context.onLoop(this._context);
     }
     kickCountForPaint++;
     stageBase.kick(timeStamp);
@@ -270,32 +278,21 @@ class TinyFlutterStage extends flu.RenderConstrainedBox implements core.Stage {
     return stageBase.popMatrix();
   }
 
-  @override
   Matrix4 getMatrix() {
     return stageBase.getMatrix();
   }
 
   @override
-  double get xFromMat => stageBase.xFromMat;
-
-  @override
-  double get yFromMat => stageBase.yFromMat;
-
-  @override
-  double get zFromMat => stageBase.zFromMat;
-
-  @override
-  double get sxFromMat => stageBase.sxFromMat;
-
-  @override
-  double get syFromMat => stageBase.syFromMat;
-
-  @override
-  double get szFromMat => stageBase.szFromMat;
-
-  @override
   Vector3 getCurrentPositionOnDisplayObject(double globalX, double globalY) {
     return stageBase.getCurrentPositionOnDisplayObject(globalX, globalY);
+  }
+
+  core.KeyEventButton createKeyEventButton(String key) {
+    return stageBase.createKeyEventButton(key);
+  }
+
+  List<core.KeyEventButton> getKeyEventButtonList(String key) {
+    return stageBase.getKeyEventButtonList(key);
   }
 }
 
